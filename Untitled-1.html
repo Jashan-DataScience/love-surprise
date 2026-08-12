@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A Special Surprise For You ❤️</title>
+
+  <!-- Confetti Animation Library -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 400px;
+    }
+
+    h2 {
+      color: #ff4b2b;
+      margin-bottom: 15px;
+    }
+
+    p {
+      color: #555;
+      font-size: 16px;
+    }
+
+    /* Progress Bar */
+    .progress-box {
+      width: 100%;
+      background: #eee;
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 20px 0;
+    }
+
+    .progress-bar {
+      width: 0%;
+      height: 15px;
+      background: #ff416c;
+      transition: width 0.1s linear;
+    }
+
+    /* Buttons */
+    .btn {
+      background: #ff416c;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      font-size: 16px;
+      border-radius: 25px;
+      cursor: pointer;
+      margin: 10px;
+      font-weight: bold;
+      transition: transform 0.2s;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
+    }
+
+    .btn-no {
+      background: #777;
+    }
+
+    /* Hide sections by default */
+    .hidden {
+      display: none;
+    }
+
+    /* Password Input */
+    input[type="password"] {
+      padding: 10px;
+      width: 80%;
+      border: 2px solid #ff416c;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      text-align: center;
+      font-size: 16px;
+    }
+
+    /* Error Message */
+    #lock-error {
+      color: red;
+      display: none;
+    }
+
+    #lock-error:not(.hidden) {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- STEP 1: LOADING SCREEN -->
+    <div id="step-loading">
+      <h2>Take a deep breath, my love... ❤️</h2>
+      <p>A special surprise is loading for you!</p>
+      <div class="progress-box">
+        <div id="progress" class="progress-bar"></div>
+      </div>
+      <p id="loading-text">0%</p>
+    </div>
+
+    <!-- STEP 2: PROPOSAL QUESTION -->
+    <div id="step-question" class="hidden">
+      <h2>Can you be mine forever? 💍</h2>
+      <button class="btn" onclick="sayYes()">Yesss! ❤️</button>
+      <button class="btn btn-no" onclick="sayNo()">Nooo 🙈</button>
+    </div>
+
+    <!-- STEP 3: "NO" WARNING MESSAGE -->
+    <div id="step-no-message" class="hidden">
+      <h2>Oh no! 😜</h2>
+      <p>You can't really say no to this! You are already mine forever. Go back and make the right choice!</p>
+      <button class="btn" onclick="backToQuestion()">Go Back ❤️</button>
+    </div>
+
+    <!-- STEP 4: YES CELEBRATION -->
+    <div id="step-success" class="hidden">
+      <h2>Yesss! 🎉❤️</h2>
+      <p>You always make my heart smile! I am so lucky to have you in my life.</p>
+      <br>
+      <button class="btn" onclick="showLock()">Unlock Special Note 🔒</button>
+    </div>
+
+    <!-- STEP 5: SECRET LOCK -->
+    <div id="step-lock" class="hidden">
+      <h2>Enter Secret Code 🔑</h2>
+      <p>Enter our special anniversary date or passcode:</p>
+      <input type="password" id="passcode" placeholder="Enter code (Try 1234)">
+      <br>
+      <button class="btn" onclick="unlockSecret()">Unlock 💖</button>
+      <p id="lock-error" class="hidden">Wrong code! Try again 😉</p>
+    </div>
+
+    <!-- STEP 6: SECRET MESSAGE -->
+    <div id="step-final" class="hidden">
+      <h2>My Heart Is Yours Forever! 💕</h2>
+      <p>Thank you for bringing so much happiness into my world!</p>
+    </div>
+
+  </div>
+
+  <script>
+    // 1. Loading screen logic
+    let percent = 0;
+    let progressBar = document.getElementById('progress');
+    let loadingText = document.getElementById('loading-text');
+
+    let interval = setInterval(() => {
+      percent += 2;
+      progressBar.style.width = percent + '%';
+      loadingText.innerText = percent + '%';
+
+      if (percent >= 100) {
+        clearInterval(interval);
+        document.getElementById('step-loading').classList.add('hidden');
+        document.getElementById('step-question').classList.remove('hidden');
+      }
+    }, 50);
+
+    // 2. Click "Yes"
+    function sayYes() {
+      // Confetti Blast Effect
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+
+      document.getElementById('step-question').classList.add('hidden');
+      document.getElementById('step-success').classList.remove('hidden');
+    }
+
+    // 3. Click "No"
+    function sayNo() {
+      document.getElementById('step-question').classList.add('hidden');
+      document.getElementById('step-no-message').classList.remove('hidden');
+    }
+
+    function backToQuestion() {
+      document.getElementById('step-no-message').classList.add('hidden');
+      document.getElementById('step-question').classList.remove('hidden');
+    }
+
+    // 4. Lock Screen
+    function showLock() {
+      document.getElementById('step-success').classList.add('hidden');
+      document.getElementById('step-lock').classList.remove('hidden');
+    }
+
+    function unlockSecret() {
+      let pass = document.getElementById('passcode').value;
+      // Change '1234' to your actual secret passcode
+      if (pass === '1234') {
+        document.getElementById('step-lock').classList.add('hidden');
+        document.getElementById('step-final').classList.remove('hidden');
+        confetti({ particleCount: 150, spread: 100 });
+      } else {
+        document.getElementById('lock-error').classList.remove('hidden');
+      }
+    }
+  </script>
+</body>
+</html>
