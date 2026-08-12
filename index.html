@@ -12,6 +12,8 @@
     * {
       box-sizing: border-box;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      -webkit-user-select: none;
+      user-select: none;
     }
 
     body {
@@ -31,6 +33,9 @@
       box-shadow: 0 10px 25px rgba(0,0,0,0.1);
       width: 90%;
       max-width: 400px;
+      min-height: 280px;
+      position: relative;
+      overflow: hidden; /* Keeps button strictly inside the card */
     }
 
     h2 {
@@ -79,6 +84,8 @@
 
     .btn-no {
       background: #777;
+      position: absolute;
+      transition: left 0.2s ease, top 0.2s ease; /* Smooth, visible movement */
     }
 
     /* Hide sections by default */
@@ -95,6 +102,8 @@
       margin-bottom: 15px;
       text-align: center;
       font-size: 16px;
+      -webkit-user-select: text;
+      user-select: text;
     }
 
     /* Error Message */
@@ -110,7 +119,7 @@
 </head>
 <body>
 
-  <div class="container">
+  <div class="container" id="card">
     
     <!-- STEP 1: LOADING SCREEN -->
     <div id="step-loading">
@@ -126,7 +135,7 @@
     <div id="step-question" class="hidden">
       <h2>Can you be mine forever? 💍</h2>
       <button class="btn" onclick="sayYes()">Yesss! ❤️</button>
-      <button class="btn btn-no" onclick="sayNo()">Nooo 🙈</button>
+      <button class="btn btn-no" id="no-btn">Nooo 🙈</button>
     </div>
 
     <!-- STEP 3: "NO" WARNING MESSAGE -->
@@ -177,12 +186,12 @@
         clearInterval(interval);
         document.getElementById('step-loading').classList.add('hidden');
         document.getElementById('step-question').classList.remove('hidden');
+        initNoButtonPosition();
       }
     }, 50);
 
     // 2. Click "Yes"
     function sayYes() {
-      // Confetti Blast Effect
       confetti({
         particleCount: 100,
         spread: 70,
@@ -193,18 +202,43 @@
       document.getElementById('step-success').classList.remove('hidden');
     }
 
-    // 3. Click "No"
-    function sayNo() {
-      document.getElementById('step-question').classList.add('hidden');
-      document.getElementById('step-no-message').classList.remove('hidden');
+    const noBtn = document.getElementById('no-btn');
+    const card = document.getElementById('card');
+
+    // Place initial button position nicely
+    function initNoButtonPosition() {
+      noBtn.style.left = '210px';
+      noBtn.style.top = '120px';
     }
+
+    // Controlled evasion logic within card boundaries
+    function moveButton() {
+      const padding = 15;
+      const maxX = card.clientWidth - noBtn.offsetWidth - padding;
+      const maxY = card.clientHeight - noBtn.offsetHeight - padding;
+
+      const randomX = Math.max(padding, Math.floor(Math.random() * maxX));
+      const randomY = Math.max(padding, Math.floor(Math.random() * maxY));
+
+      noBtn.style.left = `${randomX}px`;
+      noBtn.style.top = `${randomY}px`;
+    }
+
+    // Listen to mouseover, click, double click, and touch events
+    ['mouseover', 'click', 'dblclick', 'touchstart'].forEach(eventType => {
+      noBtn.addEventListener(eventType, (e) => {
+        e.preventDefault();
+        moveButton();
+      });
+    });
 
     function backToQuestion() {
       document.getElementById('step-no-message').classList.add('hidden');
       document.getElementById('step-question').classList.remove('hidden');
+      initNoButtonPosition();
     }
 
-    // 4. Lock Screen
+    // Lock Screen logic
     function showLock() {
       document.getElementById('step-success').classList.add('hidden');
       document.getElementById('step-lock').classList.remove('hidden');
@@ -212,8 +246,7 @@
 
     function unlockSecret() {
       let pass = document.getElementById('passcode').value;
-      // Change '1234' to your actual secret passcode
-      if (pass === '1234') {
+      if (pass === '0313') {
         document.getElementById('step-lock').classList.add('hidden');
         document.getElementById('step-final').classList.remove('hidden');
         confetti({ particleCount: 150, spread: 100 });
